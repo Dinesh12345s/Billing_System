@@ -1,0 +1,394 @@
+.payment-section {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.payment-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.payment-header h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.payment-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Discount Section */
+.discount-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.discount-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.discount-types {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.discount-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.discount-option input[type="radio"] {
+  accent-color: #4f46e5;
+}
+
+.discount-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.discount-input-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.discount-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.discount-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.quick-discounts {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quick-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.quick-discount-btn {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-discount-btn:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+.quick-discount-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Payment Methods Section */
+.payment-methods-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payment-methods-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.payment-method-option {
+  cursor: pointer;
+}
+
+.payment-method-option input[type="radio"] {
+  display: none;
+}
+
+.payment-method-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.payment-method-option input[type="radio"]:checked + .payment-method-card {
+  border-color: #4f46e5;
+  background-color: #f0f9ff;
+}
+
+.payment-method-card:hover {
+  border-color: #9ca3af;
+}
+
+.payment-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.payment-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.payment-desc {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Final Amount Section */
+.final-amount-section {
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.final-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 0.5rem;
+  border: 1px solid #0ea5e9;
+}
+
+.final-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0284c7;
+}
+
+.final-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0369a1;
+}
+
+/* Pay Button */
+.pay-button {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.pay-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+}
+
+.pay-button:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pay-icon {
+  font-size: 1.125rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payment-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .discount-section h3,
+  .payment-methods-section h3 {
+    font-size: 0.875rem;
+  }
+  
+  .discount-option {
+    font-size: 0.8rem;
+  }
+  
+  .discount-input-group label {
+    font-size: 0.8rem;
+  }
+  
+  .discount-input {
+    padding: 0.375rem;
+    font-size: 0.8rem;
+  }
+  
+  .quick-discounts {
+    gap: 0.375rem;
+  }
+  
+  .quick-label {
+    font-size: 0.6rem;
+  }
+  
+  .quick-discount-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6rem;
+  }
+  
+  .payment-method-card {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+  
+  .payment-icon {
+    font-size: 1.25rem;
+    width: 35px;
+    height: 35px;
+  }
+  
+  .payment-name {
+    font-size: 0.8rem;
+  }
+  
+  .payment-desc {
+    font-size: 0.65rem;
+  }
+  
+  .final-amount {
+    padding: 0.75rem;
+  }
+  
+  .final-label {
+    font-size: 0.875rem;
+  }
+  
+  .final-value {
+    font-size: 1.125rem;
+  }
+  
+  .pay-button {
+    padding: 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-content {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+  
+  .payment-method-card {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  .payment-icon {
+    font-size: 1rem;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .payment-name {
+    font-size: 0.75rem;
+  }
+  
+  .payment-desc {
+    font-size: 0.6rem;
+  }
+  
+  .final-amount {
+    padding: 0.5rem;
+  }
+  
+  .final-label {
+    font-size: 0.75rem;
+  }
+  
+  .final-value {
+    font-size: 1rem;
+  }
+  
+  .pay-button {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .pay-icon {
+    font-size: 1rem;
+  }
+}
