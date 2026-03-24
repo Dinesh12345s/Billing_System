@@ -280,10 +280,12 @@ router.get('/categories/all', async (req, res) => {
 
 // GET product by QR code
 router.get('/qr/:code', async (req, res) => {
-  let scannedData = req.params.code.trim();
-
   try {
-    // Try to match by product ID first (QR encodes product ID)
+    let scannedData = req.params.code.trim();
+
+    console.log("QR RECEIVED:", scannedData);
+
+    // Case 1: If QR contains product ID
     if (!isNaN(scannedData)) {
       const [rows] = await pool.execute(
         'SELECT * FROM products WHERE id = ?',
@@ -295,7 +297,7 @@ router.get('/qr/:code', async (req, res) => {
       }
     }
 
-    // Fallback: try to match by qr_code filename
+    // Case 2: If QR contains filename
     let qrCode = scannedData;
     if (!qrCode.toLowerCase().endsWith('.png')) {
       qrCode = `${qrCode}.png`;
@@ -306,17 +308,21 @@ router.get('/qr/:code', async (req, res) => {
       [qrCode]
     );
 
-    if (rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found for scanned QR'
-      });
+    if (rows.length > 0) {
+      return res.json({ success: true, product: rows[0] });
     }
 
-    res.json({ success: true, product: rows[0] });
+    return res.status(404).json({
+      success: false,
+      message: 'Product not found for scanned QR'
+    });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
   }
 });
 // Get product by ID

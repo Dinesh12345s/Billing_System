@@ -1,6 +1,7 @@
 // src/components/staff/Cart.js
-import React from 'react';
+import React, { useCallback } from 'react';
 import CartScanner from './CartScanner';
+import ErrorBoundary from '../ErrorBoundary';
 import './Cart.css';
 
 const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart, totals }) => {
@@ -8,32 +9,35 @@ const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart
   const formatCurrency = (amount) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 
-  // Handle QR scan
-  const handleScan = async (scannedData) => {
-    if (!scannedData) return;
+  // Handle QR scan - stable reference to prevent CartScanner remounts
+  const handleScan = useCallback(async (scannedData) => {
+  if (!scannedData) return;
 
-    try {
-      // Send scanned data to backend
-      const res = await fetch(`/api/products/qr/${encodeURIComponent(scannedData)}`);
-      if (!res.ok) throw new Error('Product not found for scanned QR');
+  console.log("SCANNED:", scannedData); // DEBUG
 
-      const data = await res.json();
-      
-      // Check if product already in cart
-      const productExists = cart.some(item => item.id === data.product.id);
-      
-      if (productExists) {
-        alert(`${data.product.name} is already in cart. Use quantity controls to adjust quantity.`);
-        return;
-      }
-      
-      addItemToCart(data.product, 1); // Add scanned product to cart
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+  try {
+    const res = await fetch(`/api/products/qr/${encodeURIComponent(scannedData)}`);
+
+    if (!res.ok) {
+      alert("Product not found for scanned QR");
+      return;
     }
-  };
 
+    const data = await res.json();
+
+    const productExists = cart.some(item => item.id === data.product.id);
+
+    if (productExists) {
+      alert(`${data.product.name} already in cart`);
+      return;
+    }
+
+    addItemToCart(data.product, 1);
+
+  } catch (err) {
+    console.error("Scan error:", err);
+  }
+}, [cart, addItemToCart]);
   const handleQuantityChange = (productId, newQty) => {
     if (newQty === '' || newQty < 1) return;
     onUpdateQuantity(productId, parseInt(newQty));
@@ -57,7 +61,9 @@ const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart
       {/* QR Scanner */}
       <div className="qr-scanner">
         <h3>Scan Product QR</h3>
-        <CartScanner onScan={handleScan} />
+        <ErrorBoundary>
+          <CartScanner onScan={handleScan} />
+        </ErrorBoundary>
       </div>
 
       {/* Cart Header */}
