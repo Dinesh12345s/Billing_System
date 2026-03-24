@@ -42,24 +42,21 @@
 .billing-container {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr 420px;
   gap: 2rem;
   padding: 2rem;
-  max-height: calc(100vh - 80px);
 }
 
 .billing-main {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  overflow-y: auto;
 }
 
 .billing-sidebar {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  overflow-y: auto;
 }
 
 .loading-container {
@@ -94,7 +91,7 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .billing-container {
-    grid-template-columns: 1fr 350px;
+    grid-template-columns: 1fr 380px;
   }
 }
 
@@ -119,10 +116,16 @@
     gap: 1rem;
     padding: 1rem;
     max-height: none;
+    overflow: auto;
   }
   
+  .billing-main {
+    order: 2;
+  }
+
   .billing-sidebar {
-    order: -1;
+    order: 1;
+    overflow-y: visible;
   }
 }
 

@@ -236,6 +236,7 @@ const StaffBilling = () => {
         <div className="billing-sidebar">
           <Cart
             cart={cart}
+            addItemToCart={addToCart}
             onUpdateQuantity={updateCartItemQuantity}
             onRemoveItem={removeFromCart}
             onClearCart={clearCart}

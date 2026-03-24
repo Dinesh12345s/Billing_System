@@ -1,7 +1,6 @@
 // src/components/staff/Cart.js
 import React from 'react';
 import CartScanner from './CartScanner';
-import QrScanner from 'react-qr-scanner';
 import './Cart.css';
 
 const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart, totals }) => {
@@ -14,12 +13,21 @@ const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart
     if (!scannedData) return;
 
     try {
+      // Send scanned data to backend
       const res = await fetch(`/api/products/qr/${encodeURIComponent(scannedData)}`);
       if (!res.ok) throw new Error('Product not found for scanned QR');
 
-      const product = await res.json();
-      addItemToCart(product, 1); // add scanned product to cart
-
+      const data = await res.json();
+      
+      // Check if product already in cart
+      const productExists = cart.some(item => item.id === data.product.id);
+      
+      if (productExists) {
+        alert(`${data.product.name} is already in cart. Use quantity controls to adjust quantity.`);
+        return;
+      }
+      
+      addItemToCart(data.product, 1); // Add scanned product to cart
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -27,7 +35,7 @@ const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart
   };
 
   const handleQuantityChange = (productId, newQty) => {
-    if (newQty === '' || newQty < 0) return;
+    if (newQty === '' || newQty < 1) return;
     onUpdateQuantity(productId, parseInt(newQty));
   };
 
@@ -49,12 +57,7 @@ const Cart = ({ cart, addItemToCart, onUpdateQuantity, onRemoveItem, onClearCart
       {/* QR Scanner */}
       <div className="qr-scanner">
         <h3>Scan Product QR</h3>
-        <QrScanner
-          delay={500}
-          onError={(err) => console.error(err)}
-          onScan={handleScan}
-          style={{ width: '100%' }}
-        />
+        <CartScanner onScan={handleScan} />
       </div>
 
       {/* Cart Header */}

@@ -83,10 +83,8 @@ router.post('/', authMiddleware, async (req, res) => {
       [name, category, price, gst || 0, stock]
     );
 
-    // Generate QR code based on product ID
-    const qrCode = `PRODUCT${result.insertId}`;
-
-    // Save QR code to the product
+    // <<---- ADD THIS NEXT
+    const qrCode = `product_${result.insertId}.png`;
     await pool.execute(
       'UPDATE products SET qr_code = ? WHERE id = ?',
       [qrCode, result.insertId]
@@ -282,9 +280,27 @@ router.get('/categories/all', async (req, res) => {
 
 // GET product by QR code
 router.get('/qr/:code', async (req, res) => {
-  const qrCode = req.params.code.trim();
+  let scannedData = req.params.code.trim();
 
   try {
+    // Try to match by product ID first (QR encodes product ID)
+    if (!isNaN(scannedData)) {
+      const [rows] = await pool.execute(
+        'SELECT * FROM products WHERE id = ?',
+        [parseInt(scannedData)]
+      );
+
+      if (rows.length > 0) {
+        return res.json({ success: true, product: rows[0] });
+      }
+    }
+
+    // Fallback: try to match by qr_code filename
+    let qrCode = scannedData;
+    if (!qrCode.toLowerCase().endsWith('.png')) {
+      qrCode = `${qrCode}.png`;
+    }
+
     const [rows] = await pool.execute(
       'SELECT * FROM products WHERE LOWER(qr_code) = LOWER(?)',
       [qrCode]

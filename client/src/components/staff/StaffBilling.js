@@ -1,6 +1,8 @@
 // pages/StaffBilling.js
 import React, { useState } from 'react';
-import Cart from '../components/Cart';
+import Cart from './Cart';
+import PaymentSection from './PaymentSection';
+import ProductGrid from './ProductGrid';
 
 const StaffBilling = () => {
   const [cart, setCart] = useState([]);
