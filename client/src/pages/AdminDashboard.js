@@ -13,23 +13,19 @@ const AdminDashboard = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (activeTab === 'dashboard') {
-      fetchDashboardData();
-    } else if (activeTab === 'inventory') {
-      fetchProducts();
-    }
+    if (activeTab === 'dashboard') fetchDashboardData();
+    else if (activeTab === 'inventory') fetchProducts();
   }, [activeTab]);
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       setError('');
-      
       const [statsResponse, revenueResponse, categoryResponse] = await Promise.all([
         apiService.getDashboardStats(),
         apiService.getRevenueData('week'),
@@ -42,11 +38,9 @@ const AdminDashboard = () => {
           revenueData: revenueResponse.revenueData,
           categoryData: categoryResponse.categoryData
         });
-      } else {
-        setError('Failed to load dashboard data');
-      }
-    } catch (error) {
-      console.error('Dashboard data fetch error:', error);
+      } else setError('Failed to load dashboard data');
+    } catch (err) {
+      console.error(err);
       setError('Failed to load dashboard data');
     } finally {
       setLoading(false);
@@ -57,16 +51,11 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       setError('');
-      
       const response = await apiService.getProducts();
-      
-      if (response.success) {
-        setProducts(response.products);
-      } else {
-        setError('Failed to load products');
-      }
-    } catch (error) {
-      console.error('Products fetch error:', error);
+      if (response.success) setProducts(response.products);
+      else setError('Failed to load products');
+    } catch (err) {
+      console.error(err);
       setError('Failed to load products');
     } finally {
       setLoading(false);
@@ -78,106 +67,68 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
-  const handleProductAdd = async (productData) => {
-    try {
-      const response = await apiService.addProduct(productData);
-      if (response.success) {
-        fetchProducts(); // Refresh products list
-        return { success: true };
-      }
-      return { success: false, message: response.message };
-    } catch (error) {
-      return { success: false, message: 'Failed to add product' };
-    }
-  };
-
-  const handleProductUpdate = async (id, productData) => {
-    try {
-      const response = await apiService.updateProduct(id, productData);
-      if (response.success) {
-        fetchProducts(); // Refresh products list
-        return { success: true };
-      }
-      return { success: false, message: response.message };
-    } catch (error) {
-      return { success: false, message: 'Failed to update product' };
-    }
-  };
-
-  const handleProductDelete = async (id) => {
-    try {
-      const response = await apiService.deleteProduct(id);
-      if (response.success) {
-        fetchProducts(); // Refresh products list
-        return { success: true };
-      }
-      return { success: false, message: response.message };
-    } catch (error) {
-      return { success: false, message: 'Failed to delete product' };
-    }
-  };
-
   const renderContent = () => {
-    if (loading) {
+    if (loading)
       return (
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading...</p>
         </div>
       );
-    }
 
-    if (error) {
+    if (error)
       return (
         <div className="error-container">
-          <div className="alert alert-error">
-            {error}
-          </div>
+          <div className="alert alert-error">{error}</div>
           <button onClick={() => window.location.reload()} className="btn btn-primary">
             Retry
           </button>
         </div>
       );
-    }
 
-    switch (activeTab) {
-      case 'dashboard':
-        return (
-          <DashboardOverview 
-            data={dashboardData}
-            onRefresh={fetchDashboardData}
-          />
-        );
-      case 'inventory':
-        return (
-          <InventoryManagement 
-            products={products}
-            onProductAdd={handleProductAdd}
-            onProductUpdate={handleProductUpdate}
-            onProductDelete={handleProductDelete}
-            onRefresh={fetchProducts}
-          />
-        );
-      default:
-        return <DashboardOverview data={dashboardData} />;
-    }
+    if (activeTab === 'dashboard')
+      return <DashboardOverview data={dashboardData} onRefresh={fetchDashboardData} />;
+
+    if (activeTab === 'inventory')
+      return (
+        <InventoryManagement
+          products={products}
+          onProductAdd={async (p) => {
+            const res = await apiService.addProduct(p);
+            if (res.success) fetchProducts();
+            return res;
+          }}
+          onProductUpdate={async (id, p) => {
+            const res = await apiService.updateProduct(id, p);
+            if (res.success) fetchProducts();
+            return res;
+          }}
+          onProductDelete={async (id) => {
+            const res = await apiService.deleteProduct(id);
+            if (res.success) fetchProducts();
+            return res;
+          }}
+          onRefresh={fetchProducts}
+        />
+      );
+
+    return null;
   };
 
   return (
     <div className="admin-dashboard">
-      <Sidebar 
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        user={user}
-        onLogout={handleLogout}
-      />
-      
+      {/* Fixed Sidebar */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} user={user} onLogout={handleLogout} />
+
+      {/* Main content shifted right */}
       <div className="main-content">
         <header className="dashboard-header">
           <h1>
-            {activeTab === 'dashboard' ? 'Dashboard' : 
-             activeTab === 'inventory' ? 'Inventory Management' : 
-             'Admin Panel'}
+            {activeTab === 'dashboard'
+              ? 'Dashboard'
+              : activeTab === 'inventory'
+              ? 'Inventory Management'
+              : 'Admin Panel'}
           </h1>
           <div className="header-actions">
             <span className="welcome-text">Welcome, {user?.username}</span>
@@ -186,10 +137,8 @@ const AdminDashboard = () => {
             </button>
           </div>
         </header>
-        
-        <main className="dashboard-content">
-          {renderContent()}
-        </main>
+
+        <main className="dashboard-content">{renderContent()}</main>
       </div>
     </div>
   );

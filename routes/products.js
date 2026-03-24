@@ -77,16 +77,26 @@ router.post('/', authMiddleware, async (req, res) => {
       });
     }
 
-    // Insert product
+    // Insert product without QR code first
     const [result] = await pool.execute(
       'INSERT INTO products (name, category, price, gst, stock) VALUES (?, ?, ?, ?, ?)',
       [name, category, price, gst || 0, stock]
     );
 
+    // Generate QR code based on product ID
+    const qrCode = `PRODUCT${result.insertId}`;
+
+    // Save QR code to the product
+    await pool.execute(
+      'UPDATE products SET qr_code = ? WHERE id = ?',
+      [qrCode, result.insertId]
+    );
+
     res.status(201).json({
       success: true,
       message: 'Product added successfully',
-      productId: result.insertId
+      productId: result.insertId,
+      qrCode
     });
 
   } catch (error) {
@@ -268,5 +278,46 @@ router.get('/categories/all', async (req, res) => {
     });
   }
 });
+// routes/products.js
 
+// GET product by QR code
+router.get('/qr/:code', async (req, res) => {
+  const qrCode = req.params.code.trim();
+
+  try {
+    const [rows] = await pool.execute(
+      'SELECT * FROM products WHERE LOWER(qr_code) = LOWER(?)',
+      [qrCode]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found for scanned QR'
+      });
+    }
+
+    res.json({ success: true, product: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+// Get product by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [products] = await pool.execute(
+      'SELECT * FROM products WHERE id = ?',
+      [id]
+    );
+    if (products.length === 0) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+    res.json({ success: true, product: products[0] });
+  } catch (error) {
+    console.error('Get product error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
 module.exports = router;
