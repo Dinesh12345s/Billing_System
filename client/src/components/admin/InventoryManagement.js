@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { apiService } from '../../services/apiService';
 import ProductForm from './ProductForm';
 import './InventoryManagement.css';
 
-const InventoryManagement = ({ products, onProductAdd, onProductUpdate, onProductDelete, onRefresh }) => {
+const InventoryManagement = ({ products, onProductAdd, onProductUpdate, onRefresh }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -65,20 +64,6 @@ const InventoryManagement = ({ products, onProductAdd, onProductUpdate, onProduc
     return result;
   };
 
-  const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) {
-      return;
-    }
-
-    setLoading(true);
-    const result = await onProductDelete(productId);
-    setLoading(false);
-    
-    if (!result.success) {
-      alert(result.message || 'Failed to delete product');
-    }
-  };
-
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setShowAddForm(false);
@@ -92,9 +77,9 @@ const InventoryManagement = ({ products, onProductAdd, onProductUpdate, onProduc
   };
 
   const getStockStatus = (stock) => {
-    if (stock === 0) return { status: 'out', color: '#ef4444', label: 'Out of Stock' };
-    if (stock < 10) return { status: 'low', color: '#f59e0b', label: 'Low Stock' };
-    return { status: 'good', color: '#10b981', label: 'In Stock' };
+    if (stock === 0) return { color: '#ef4444', label: 'Out of Stock' };
+    if (stock < 10) return { color: '#f59e0b', label: 'Low Stock' };
+    return { color: '#10b981', label: 'In Stock' };
   };
 
   return (
@@ -190,13 +175,6 @@ const InventoryManagement = ({ products, onProductAdd, onProductUpdate, onProduc
                       >
                         ✏️ Edit
                       </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="btn btn-sm btn-danger"
-                        disabled={loading}
-                      >
-                        🗑️ Delete
-                      </button>
                     </td>
                   </tr>
                 );
@@ -206,7 +184,7 @@ const InventoryManagement = ({ products, onProductAdd, onProductUpdate, onProduc
         </table>
       </div>
 
-      {/* Add/Edit Product Form Modal */}
+      {/* Add/Edit Product Modal */}
       {(showAddForm || editingProduct) && (
         <div className="modal-overlay">
           <div className="modal">
