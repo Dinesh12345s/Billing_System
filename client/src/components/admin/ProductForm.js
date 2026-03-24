@@ -29,7 +29,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }) => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({
@@ -68,7 +68,7 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -82,22 +82,12 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }) => {
     };
 
     const result = await onSubmit(submitData);
-    
+
     if (!result.success) {
       setErrors({ submit: result.message });
     }
   };
 
-  const categories = [
-    'Electronics',
-    'Accessories',
-    'Computer Parts',
-    'Networking',
-    'Software',
-    'Peripherals',
-    'Storage',
-    'Other'
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="product-form">
@@ -125,21 +115,16 @@ const ProductForm = ({ product, onSubmit, onCancel, loading }) => {
 
         <div className="form-group">
           <label htmlFor="category">Category *</label>
-          <select
+          <input
+            type="text"
             id="category"
             name="category"
             value={formData.category}
             onChange={handleChange}
             className={`input ${errors.category ? 'input-error' : ''}`}
+            placeholder="Enter category"
             disabled={loading}
-          >
-            <option value="">Select category</option>
-            {categories.map(category => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+          />
           {errors.category && <span className="error-text">{errors.category}</span>}
         </div>
 
